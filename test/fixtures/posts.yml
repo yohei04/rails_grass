@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  post_date: 2019-12-06
+  post_days: 1
+  posts_hours: 2019-12-06 19:23:19
+  posts_t_hours: 2019-12-06 19:23:19
+  content: MyText
+
+two:
+  post_date: 2019-12-06
+  post_days: 1
+  posts_hours: 2019-12-06 19:23:19
+  posts_t_hours: 2019-12-06 19:23:19
+  content: MyText

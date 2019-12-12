@@ -1,0 +1,52 @@
+// Place all the styles related to the home controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.flash {
+  height: 30%;
+  text-align: center;
+  background-color: pink;
+} 
+
+.home_wrapper {
+  padding: 20px;
+}
+.home_container {
+  width: 100%;
+  max-width: 400px;
+  padding: 1rem;
+  margin: 0 auto;
+  background-color: rgb(236, 229, 229);
+  border: solid 2px red
+}
+
+.home_top {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  align-items: flex-end;
+  h2 {
+    
+  }
+  a {
+    position: absolute;
+    right: 0;
+  }
+}
+
+.home_form {
+  dl {
+    display: flex;
+    margin: 1rem;
+  }
+  dt {
+    width: 200px;
+  }
+
+}

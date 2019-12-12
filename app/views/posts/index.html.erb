@@ -1,0 +1,38 @@
+<div class="post_wrapper">
+  <div class="post_container">
+    <div class="post_top">
+      <h2>投稿一覧</h2>
+      <%= link_to("トップへ", "/posts/new") %>
+    </div>
+    <div class="posts_items">
+      <%# <% @posts_date.zip(@posts_days, @posts) do |post_date, post_days, post| %>
+      <% @posts.each do |post| %>
+      <div class="posts_item">
+        <div class="posts_id">
+          投稿ID: <%= post.id %>
+        </div>
+        <div class="posts_date">
+          日付: <%= post.created_at.strftime("%Y-%m-%d %H:%M:%S") %>
+        </div>
+        <div class="posts_days">
+          期間: <%= post.days %>日目
+        </div>
+        <div class="posts_hours">
+          今日: <%= post.hours %>時間
+        </div>
+        <div class="posts_t_hours">
+          トータル: <%= post.t_hours %>時間
+        </div>
+        <div class="posts_t_tweet">
+          内容: <%= link_to(post.content, "/posts/#{post.id}") %>
+        </div>
+        <div class="posts_edit">
+          <%= link_to("編集", "/posts/#{post.id}/edit") %>
+        </div>
+        <div class="posts_destroy">
+          <%= link_to("削除", "/posts/#{post.id}/destroy", {method: "post"}) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,467 @@
+<div class="home_wrapper">
+  <div class="home_container">
+    <div class="home_top">
+      <h2>ツイート</h2>
+      <%= link_to("投稿一覧", "/posts/index") %>
+    </div>
+    <%= form_tag("/posts/create") do %>
+    <div class="home_form">
+      <form action="">
+        <% @post.errors.full_messages.each do |message| %>
+          <div class="form-error">
+            <%= message %>
+          </div>
+        <% end %>
+        <%# <dl>
+          <dt><label class="label" for="date">日付</label></dt>
+          <dd><input class="inputs" type="text" name="date" id="date"></dd>
+        </dl> %>
+        <dl>
+          <dt><label class="label" for="days">学習開始から何日目</label></dt>
+          <dd><input class="inputs" type="text" name="days" id="days"></dd>
+        </dl>
+        <dl>
+          <dt><label class="label" for="hours">今日の学習時間</label></dt>
+          <dd><input class="inputs" type="text" name="hours" id="hours"></dd>
+        </dl>
+        <%# <dl>
+          <dt><label class="label" for="t_hours">トータルの学習時間</label></dt>
+          <dd><input class="inputs" type="text" name="t_hours" id="t_hours"></dd>
+        </dl> %>
+        <dl>
+          <dt><label class="label" for="tweet">内容</label></dt>
+          <dd><textarea class="inputs" id="tweet" name="content"><%= @post.content %></textarea></dd>
+        </dl>
+        <input type="submit" value="投稿">
+        <% end %>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<% today = Time.current %>
+<% thisYear = today.strftime("%Y") %>
+<% thisMonth = today.strftime("%m") %>
+<% thisDay = today.strftime("%d") %>
+<% weeks = ['日', '月', '火', '水', '木', '金', '土'] %>
+
+<%# date = new Date()%>
+<%# year = date.getFullYear()%>
+<%# month = date.getMonth() + 1%>
+<%# 今月から何ヶ月前か %>
+<%#= m = 0%>
+<% for m in 0..3 %>
+<%# // 月の最初の日を取得 %>
+<% startDate = today.ago(m.month).beginning_of_month %> 
+<%# // 月の最後の日を取得 %>
+<% endDate = today.ago(m.month).end_of_month %> 
+<%# // 月の末日 %>
+<% endDayCount = endDate.strftime("%d")%> 
+<%# // 月の最初の日の曜日を取得 %>
+<% startDay = startDate.wday %> 
+<%# // 日にちのカウント %>
+<% dayCount = 0 %> 
+
+
+<table>
+  <caption class="title">学習カレンダー</caption>
+  <button id="prev" type="button">前の年</button>
+  <caption class="year_month"><%= today.ago(m.month).strftime("%Y年%m月") %></caption>
+  <button id="next" type="button">次の年</button><br>
+<% 
+=begin 
+%>
+  <% for i in 1..12 do%>
+  <button><%= i %></button>
+  <% end %>
+<% 
+=end 
+%>
+  
+  <tr>
+    <% for j in 0..6 do %>
+    <th><%= weeks[j] %></th>
+    <% end %>
+  </tr>
+
+  <% for w in 0..5 do %>
+    <tr>
+    <% for d in 0..6 do %>
+      <% if (w == 0 && d < startDay.to_f) %>
+        <%# // 1行目で1日の曜日の前 %>
+        <td></td>
+      <% elsif (dayCount > endDayCount.to_f-1) %>
+        <%# // 末尾の日数を超えた %>
+        <td></td>
+      <% else %>
+        <td>
+          <p class="day"><%= startDate.since(dayCount.days).strftime("%-d日") %></p>
+          <p class="hours">
+            <% sum = 0 %>
+            <% @posts.each do |post| %>
+              <% if post.created_at.strftime("%Y%m%d") == startDate.since(dayCount.days).strftime("%Y%m%d") %>
+              <% sum += post.hours.to_f %>
+              <% end %>
+            <% end %>
+            <%= sum.to_f %>
+          </p><span>時間</span>
+          <div class="hover">
+          <% @posts.each do |post| %>
+            <% if post.created_at.strftime("%Y%m%d") == startDate.since(dayCount.days).strftime("%Y%m%d") %>
+              <p><%= post.created_at.strftime("%Y-%m-%d %H:%M") %><br></p>
+              <p><%= post.days %>日目 <%= post.hours %>時間<br></p>
+              <p class="content"><%= post.content %><br><br></p>
+            <% end %>
+          <% end %>
+          </div>
+        </td>
+        <% dayCount += 1 %>
+      <% end %>
+    <% end %>
+    </tr>
+  <% end %>
+</table>
+<% end %>
+
+
+
+
+
+<script>
+$(function () {
+  let hoursDivs = $(".hours");
+  for ( let i of hoursDivs) {
+    //console.log("I==== ",i);
+    if (Number(i.innerText) >= 8.0) {
+      i.parentNode.classList.add("best")
+    } else if (Number(i.innerText) >= 4.0) {
+      i.parentNode.classList.add("good");
+    } else if (Number(i.innerText) >= 1.0) {
+      i.parentNode.classList.add("normal");
+    } else {
+      i.parentNode.classList.add("bad");
+    } 
+    // console.log(i.parentNode.classList.add("overtime"))
+  }
+
+  $("td").hover(
+    function() {
+      if ($(this).find(".content").text() != "") {
+        $(this).find(".hover").css("display", "block")
+      }
+    },
+    function() {
+      if ($(this).find(".content").text() != "") {
+        $(this).find(".hover").css("display", "none")
+      }
+    }
+  )
+
+
+  $("#prev").click(function() {
+  })
+
+  
+    let month = <%== JSON.dump(thisMonth) %>;
+
+    
+
+
+//   function moveCalendar(e) {
+
+//     // document.querySelector('#calendar').innerHTML = ''
+
+//     if (e.target.id === 'prev') {
+//         month--
+
+//         if (month < 1) {
+//             year--
+//             month = 12
+//         }
+//     }
+//     // console.log(month)
+
+//     if (e.target.id === 'next') {
+//         month++
+
+//         if (month > 12) {
+//             year++
+//             month = 1
+//         }
+//     }
+
+//     // showCalendar(year, month)
+// }
+
+// document.querySelector('#prev').addEventListener('click', moveCalendar)
+// document.querySelector('#next').addEventListener('click', moveCalendar)
+
+// showCalendar(year, month)
+
+  });
+
+</script>
+
+<style>
+  button {
+    font-size: 1rem;
+    margin: .4rem
+  }
+  
+  .best {
+    background-color: tomato;
+  }
+  .good {
+    background-color: lightsalmon;
+  }
+  .normal {
+    background-color: navajowhite;
+  }
+  .bad {
+    background-color: lightblue;
+  }
+
+  td {
+    width: 80px;
+    position: relative;
+  }
+  .hover {
+    display: none;
+    position: absolute;
+    padding: 16px;
+    width: 300px;
+    height: 300px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;  
+    border-radius: 8px;
+    background: #333;
+    color: #fff;
+    overflow: scroll;
+    z-index: 1;
+  }
+  
+</style>
+
+
+<% 
+=begin
+%>
+
+<% dayCount = 0 %>
+  <% for w in 0..4 do%>
+  <tr>
+  <% for d in 0..6 do %>
+    <td>
+      <p class="day"><%= firstday.since(dayCount.days).strftime("%-d日") %></p>
+      <p class="hours">
+        <% sum = 0 %>
+        <% @posts.each do |post| %>
+          <% if post.created_at.strftime("%Y%m%d") == firstday.since(dayCount.days).strftime("%Y%m%d") %>
+          <% sum += post.hours.to_f %>
+          <% end %>
+        <% end %>
+        <%= sum.to_f %>
+      </p><span>時間</span>
+      <div class="hover">
+      <% @posts.each do |post| %>
+        <% if post.created_at.strftime("%Y%m%d") == firstday.since(dayCount.days).strftime("%Y%m%d") %>
+          <p><%= post.created_at.strftime("%Y-%m-%d %H:%M") %><br></p>
+          <p><%= post.days %>日目 <%= post.hours %>時間<br></p>
+          <p class="content"><%= post.content %><br><br></p>
+        <% end %>
+      <% end %>
+      </div>
+    </td>
+    <% dayCount += 1 %>
+    <% end %>
+  </tr>
+  <% end %>
+  
+<%
+=end
+%>
+
+    <%# <td>
+      <p class="day">2日</p>
+      <p class="hours">4時間</p>
+    </td>
+    <td>
+      <p class="day">3日</p>
+      <p class="hours">3時間</p>
+    </td>
+    <td>
+      <p class="day">4日</p>
+      <p class="hours">4時間</p>
+    </td>
+    <td>
+      <p class="day">5日</p>
+      <p class="hours">4時間</p>
+    </td>
+    <td>
+      <p class="day">6日</p>
+      <p class="hours">4時間</p>
+    </td>
+    <td>
+      <p class="day">7日</p>
+      <p class="hours">4時間</p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <p class="day">8日</p>
+      <p class="hours">4時間</p>
+    </td>
+    <td>
+      <p class="day">9日</p>
+      <p class="hours">4時間</p>
+    </td>
+    <td>
+      <p class="day">10日</p>
+      <p class="hours">4時間</p>
+    </td>
+    <td>
+      <p class="day">11日</p>
+      <p class="hours">4時間</p>
+    </td>
+    <td>
+      <p class="day">12日</p>
+      <p class="hours">4時間</p>
+    </td>
+    <td>
+      <p class="day">13日</p>
+      <p class="hours">4時間</p>
+    </td>
+    <td>
+      <p class="day">14日</p>
+      <p class="hours">100時間</p>
+    </td>
+  </tr>
+
+  <tr>
+    <td>30</td>
+    <td>31</td>
+    <td>1</td>
+    <td>2</td>
+    <td>3</td>
+    <td>4</td>
+    <td>5</td>
+  </tr> %>
+  
+
+
+<%# <div id="calendar"></div>
+
+<script>
+  const weeks = ['日', '月', '火', '水', '木', '金', '土']
+const date = new Date()
+let year = date.getFullYear()
+let month = date.getMonth() + 1
+const config = {
+    show: 3,
+}
+
+function showCalendar(year, month) {
+    for ( i = 0; i < config.show; i++) {
+        const calendarHtml = createCalendar(year, month)
+        const sec = document.createElement('section')
+        sec.innerHTML = calendarHtml
+        document.querySelector('#calendar').appendChild(sec)
+
+        month++
+        if (month > 12) {
+            year++
+            month = 1
+        }
+    }
+}
+
+function createCalendar(year, month) {
+    const startDate = new Date(year, month - 1, 1) // 月の最初の日を取得
+    const endDate = new Date(year, month,  0) // 月の最後の日を取得
+    const endDayCount = endDate.getDate() // 月の末日
+    const lastMonthEndDate = new Date(year, month - 2, 0) // 前月の最後の日の情報
+    const lastMonthendDayCount = lastMonthEndDate.getDate() // 前月の末日
+    const startDay = startDate.getDay() // 月の最初の日の曜日を取得
+    let dayCount = 1 // 日にちのカウント
+    let calendarHtml = '' // HTMLを組み立てる変数
+
+    calendarHtml += '<h1>' + year  + '/' + month + '</h1>'
+    calendarHtml += '<table>'
+
+    // 曜日の行を作成
+    for (let i = 0; i < weeks.length; i++) {
+        calendarHtml += '<td>' + weeks[i] + '</td>'
+    }
+
+    for (let w = 0; w < 6; w++) {
+        calendarHtml += '<tr>'
+
+        for (let d = 0; d < 7; d++) {
+            if (w == 0 && d < startDay) {
+                // 1行目で1日の曜日の前
+                let num = lastMonthendDayCount - startDay + d + 1
+                calendarHtml += '<td class="is-disabled">' + num + '</td>'
+            } else if (dayCount > endDayCount) {
+                // 末尾の日数を超えた
+                let num = dayCount - endDayCount
+                calendarHtml += '<td class="is-disabled">' + num + '</td>'
+                dayCount++
+            } else {
+                calendarHtml += `<td class="calendar_td" data-date="${year}/${month}/${dayCount}">
+                ${dayCount}
+                <p>${gon.posts[30].created_at}</p>
+                </td>`
+                dayCount++
+                // console.log(new Date())
+                // console.log(gon.post)
+
+            }
+        }
+        calendarHtml += '</tr>'
+    }
+    calendarHtml += '</table>'
+
+    return calendarHtml
+}
+
+function moveCalendar(e) {
+    document.querySelector('#calendar').innerHTML = ''
+
+    if (e.target.id === 'prev') {
+        month--
+
+        if (month < 1) {
+            year--
+            month = 12
+        }
+    }
+
+    if (e.target.id === 'next') {
+        month++
+
+        if (month > 12) {
+            year++
+            month = 1
+        }
+    }
+
+    showCalendar(year, month)
+}
+
+document.querySelector('#prev').addEventListener('click', moveCalendar)
+document.querySelector('#next').addEventListener('click', moveCalendar)
+
+document.addEventListener("click", function(e) {
+    if(e.target.classList.contains("calendar_td")) {
+        alert('クリックした日付は' + e.target.dataset.date + 'です')
+    }
+})
+
+showCalendar(year, month)
+
+</script> %>
+
