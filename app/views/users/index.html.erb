@@ -1,0 +1,12 @@
+<div class="users_wrapper">
+  <div class="users_container">
+    <h2 class="users-heading">ユーザー一覧</h2>
+    <div class="users_items">
+    <% @users.each do |user| %>
+      <h3 class="user_name"><%= link_to(user.name, "/users/#{user.id}") %></h3>
+    <% end %>
+    </div>
+  
+
+  </div>
+</div>

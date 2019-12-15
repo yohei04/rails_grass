@@ -2,7 +2,6 @@
   <div class="home_container">
     <div class="home_top">
       <h2>ツイート</h2>
-      <%= link_to("投稿一覧", "/posts/index") %>
     </div>
     <%= form_tag("/posts/create") do %>
     <div class="home_form">
@@ -55,6 +54,8 @@
 <%# 今月から何ヶ月前か %>
 <%#= m = 0%>
 <% for m in 0..3 %>
+<%#  m = 0 %>
+
 <%# // 月の最初の日を取得 %>
 <% startDate = today.ago(m.month).beginning_of_month %> 
 <%# // 月の最後の日を取得 %>
