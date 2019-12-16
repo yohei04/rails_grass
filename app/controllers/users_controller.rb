@@ -1,4 +1,9 @@
 class UsersController < ApplicationController
+
+  before_action :authenticate_user, {only: [:index, :show, :edit, :update]}
+  before_action :forbid_login_user, {only: [:login, :login_form, :new, :create]}
+  before_action :ensure_correct_user, {only: [:edit, :update]}
+
   def index
     @users = User.all
   end
@@ -12,8 +17,9 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(name: params[:name])
+    @user = User.new(name: params[:name], password: params[:password])
     if @user.save
+      session[:user_id] = @user.id
       flash[:notice] = "ユーザー登録が完了しました"
       redirect_to("/users/#{@user.id}")
     else
@@ -57,7 +63,14 @@ class UsersController < ApplicationController
   def logout
     session[:user_id] = nil
     flash[:notice] = "ログアウトしました"
-    redirect_to('/users/login')
+    redirect_to('/login')
+  end
+
+  def ensure_correct_user
+    if @current_user.id != params[:id].to_i
+      flash[:notice] = "権限がありません"
+      redirect_to("/posts/new")
+    end
   end
 
 end
