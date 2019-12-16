@@ -1,4 +1,6 @@
 <h2>ユーザー情報</h2>
 <p>ユーザーID: <%= @user.id %></p>
 <p><%= @user.name %></p>
-<p><%= link_to("編集", "/users/#{@user.id}/edit") %></p>
+<% if @user.id == @current_user.id %>
+  <%= link_to("編集", "/users/#{@user.id}/edit") %>
+<% end %>
