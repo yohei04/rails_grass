@@ -14,7 +14,7 @@ class PostsController < ApplicationController
   def new
     @posts = Post.all.order(created_at: :desc)
     @post = Post.new
-
+    @user_post = Post.where(user_id: @current_user.id).order(created_at: :desc)
   end
 
   def create
