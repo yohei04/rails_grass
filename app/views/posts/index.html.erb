@@ -11,6 +11,9 @@
         <div class="posts_id">
           投稿ID: <%= post.id %>
         </div>
+        <div class="posts_user_name">
+          ユーザー名: <%= link_to(post.user.name, "/users/#{post.user.id}") %>
+        </div>
         <div class="posts_date">
           日付: <%= post.created_at.strftime("%Y-%m-%d %H:%M:%S") %>
         </div>

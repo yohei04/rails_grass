@@ -8,6 +8,7 @@ class PostsController < ApplicationController
 
   def show
     @post = Post.find_by(id: params[:id])
+    @user = @post.user
   end
 
   def new
@@ -22,7 +23,8 @@ class PostsController < ApplicationController
       hours: params[:hours],
       # t_hours: params[:t_hours],
       t_hours: Post.all.sum(:hours) + params[:hours].to_f,
-      content: params[:content]
+      content: params[:content],
+      user_id: @current_user.id
       )
       if @post.save
         redirect_to("/posts/index")
