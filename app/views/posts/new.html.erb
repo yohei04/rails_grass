@@ -1,4 +1,6 @@
 <div class="home_wrapper">
+  <p>期間: <%= @study_days %>日目, コミット: <%= @commit_days %>日, コミット率: <%= @commit_rate %>%, 合計: <%= @study_h %>h, 1日平均: <%= @study_h_ave %>h/d </p>
+
   <div class="home_container">
     <div class="home_top">
       <h2>ツイート</h2>
@@ -103,7 +105,7 @@
           <p class="day"><%= startDate.since(dayCount.days).strftime("%-d日") %></p>
           <p class="hours">
             <% sum = 0 %>
-            <% @posts.each do |post| %>
+            <% @user_posts.each do |post| %>
               <% if post.created_at.strftime("%Y%m%d") == startDate.since(dayCount.days).strftime("%Y%m%d") %>
               <% sum += post.hours.to_f %>
               <% end %>
@@ -113,7 +115,7 @@
 
           <%# ホバーで出てくる %>
           <div class="hover">
-            <% @posts.each do |post| %>
+            <% @user_posts.each do |post| %>
               <% if post.created_at.strftime("%Y%m%d") == startDate.since(dayCount.days).strftime("%Y%m%d") %>
                 <p><%= post.created_at.strftime("%Y-%m-%d %H:%M") %><br></p>
                 <p><%= post.days %>日目 <%= post.hours %>時間<br></p>

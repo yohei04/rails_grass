@@ -2,11 +2,21 @@
   <div class="users_container">
     <h2 class="users-heading">ユーザー一覧</h2>
     <div class="users_items">
-    <% @users.each do |user| %>
-      <h3 class="user_name"><%= link_to(user.name, "/users/#{user.id}") %></h3>
-    <% end %>
+      <% @users.each do |user| %>
+        <h3 class="user_name"><%= link_to(user.name, "/users/#{user.id}") %></h3>
+          <% @U_study_h = user.posts.sum(:hours) %>
+          <% if @U_study_h == 0 %>
+            期間: <%= @U_study_days = 1 %>日目,
+          <% else %>
+            期間: <%= @U_study_days = Date.today.strftime("%-d").to_i - user.posts[user.posts.length - 1].created_at.strftime("%-d").to_i + 1 %>日目,
+          <% end %>
+            コミット: <%= @U_commit_days = (user.posts.map {|hash| hash["created_at"].strftime("%d")}).uniq.length %>日, 
+            コミット率: <%= @U_commit_rate = (@U_commit_days.to_f / @U_study_days.to_f * 100).round(1) %>%,
+            合計: <%= @U_study_h = user.posts.sum(:hours) %>h,
+            1日平均: <%= @U_study_h_ave = (@U_study_h / @U_study_days).round(1) %>h/d, 
+            登録日: <%= user.created_at.strftime("%Y/%m/%d") %>
+        <% end %>
+    <%# @users = @users.map {|item| item.posts[item.posts.length - 1].created_at.strftime("%-d").to_i } %>
     </div>
-  
-
   </div>
 </div>

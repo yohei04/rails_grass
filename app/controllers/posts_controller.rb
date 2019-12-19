@@ -1,9 +1,11 @@
 class PostsController < ApplicationController
 
   before_action :authenticate_user
+  before_action :output, #{only: [:index, :new, :create]}
 
   def index
     @posts = Post.all.order(created_at: :desc)
+    # @user_posts = Post.where(user_id: @current_user.id).order(created_at: :desc)
   end
 
   def show
@@ -14,15 +16,18 @@ class PostsController < ApplicationController
   def new
     @posts = Post.all.order(created_at: :desc)
     @post = Post.new
-    @user_post = Post.where(user_id: @current_user.id).order(created_at: :desc)
+    
+    
   end
 
   def create
+    # @user_posts = Post.where(user_id: @current_user.id).order(created_at: :desc)
     @post = Post.new(
-      days: params[:days],
+      # days: params[:days],
+      days: @study_days,
       hours: params[:hours],
       # t_hours: params[:t_hours],
-      t_hours: Post.all.sum(:hours) + params[:hours].to_f,
+      t_hours: @user_posts.sum(:hours) + params[:hours].to_f,
       content: params[:content],
       user_id: @current_user.id
       )
@@ -52,8 +57,13 @@ class PostsController < ApplicationController
   def destroy
     @post = Post.find_by(id: params[:id])
     if @post.destroy
-    flash[:notice] = "投稿ID#{@post.id}の投稿を削除しました"
-    redirect_to("/posts/index")
+      @future_posts = Post.where(user_id: @current_user.id).where("id > #{@post.id}")
+      @future_posts.each do |future_post|
+        future_post.t_hours -= @post.hours
+        future_post.save
+      end
+      flash[:notice] = "投稿ID#{@post.id}の投稿を削除しました"
+      redirect_to("/posts/index")
     end
   end
 

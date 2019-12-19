@@ -20,5 +20,18 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def output
+    @user_posts = Post.where(user_id: @current_user.id).order(created_at: :desc)
+    @study_days = 1
+    @study_h = @user_posts.sum(:hours)
+    @commit_days = @study_h_ave = @commit_rate = 0
+    if @study_h > 0
+      @study_days = (Date.today.strftime("%-d").to_i - @user_posts[@user_posts.length - 1].created_at.strftime("%-d").to_i) + 1
+      @commit_days = (@user_posts.map {|hash| hash["created_at"].strftime("%d")}).uniq.length
+      @study_h_ave = (@study_h / @study_days).round(1)
+      @commit_rate = (@commit_days.to_f / @study_days.to_f * 100).round(1)
+    end
+  end
+
 
 end
