@@ -1,10 +1,13 @@
-<%= @post.content %>
-<br>
 <%= @post.created_at.strftime("%Y-%m-%d %H:%M:%S") %>
 <br>
-<%= link_to("編集", "/posts/#{@post.id}/edit") %>
+<%= link_to(@user.name,"/users/#{@user.id}") %>
 <br>
-<%= link_to("削除", "/posts/#{@post.id}/destroy", {method: "post"}) %>
+<%= @post.content %>
+<br>
+<% if @post.user_id == @current_user.id %>
+  <%= link_to("編集", "/posts/#{@post.id}/edit") %>
+  <%= link_to("削除", "/posts/#{@post.id}/destroy", {method: "post"}) %>
+<% end %>
 
 
 

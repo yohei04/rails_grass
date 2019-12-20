@@ -4,8 +4,10 @@ class UsersController < ApplicationController
   before_action :forbid_login_user, {only: [:login, :login_form, :new, :create]}
   before_action :ensure_correct_user, {only: [:edit, :update]}
 
+
   def index
     @users = User.all
+    # @user_posts = Post.where(user_id: user.id).order(created_at: :desc)
   end
 
   def show
